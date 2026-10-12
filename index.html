@@ -689,5 +689,50 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
+
+    <!-- Form AJAX Handler -->
+    <script>
+        const contactForm = document.getElementById('contactForm');
+
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('.form-submit');
+            const originalText = submitBtn.textContent;
+
+            // Блокируем кнопку и показываем загрузку
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+
+            fetch('send.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    submitBtn.textContent = '✓ Заявка отправлена';
+                    submitBtn.style.background = '#22c55e';
+                    this.reset();
+
+                    setTimeout(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                        submitBtn.style.background = '';
+                    }, 3000);
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    alert('Ошибка: ' + data.message);
+                }
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                alert('Ошибка сети. Попробуйте позже.');
+            });
+        });
+    </script>
 </body>
 </html>
