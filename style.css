@@ -1717,3 +1717,47 @@ img {
         max-height: 50vh;
     }
 }
+
+/* ===== SCROLL ANIMATIONS ===== */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-on-scroll.animate--visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.animate-on-scroll.animate--left {
+    transform: translateX(-40px);
+}
+
+.animate-on-scroll.animate--left.animate--visible {
+    transform: translateX(0);
+}
+
+.animate-on-scroll.animate--right {
+    transform: translateX(40px);
+}
+
+.animate-on-scroll.animate--right.animate--visible {
+    transform: translateX(0);
+}
+
+.animate-on-scroll.animate--scale {
+    transform: scale(0.9);
+}
+
+.animate-on-scroll.animate--scale.animate--visible {
+    transform: scale(1);
+}
+
+/* Staggered delays for grid items */
+.animate-on-scroll[data-delay="1"] { transition-delay: 0.1s; }
+.animate-on-scroll[data-delay="2"] { transition-delay: 0.2s; }
+.animate-on-scroll[data-delay="3"] { transition-delay: 0.3s; }
+.animate-on-scroll[data-delay="4"] { transition-delay: 0.4s; }
+.animate-on-scroll[data-delay="5"] { transition-delay: 0.5s; }
+.animate-on-scroll[data-delay="6"] { transition-delay: 0.6s; }
