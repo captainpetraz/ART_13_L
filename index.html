@@ -114,15 +114,30 @@
                             <span class="hero-stat-label">Свой цех и склад</span>
                         </div>
                     </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="hero-visual-text">ART 13</div>
                     <div class="hero-visual-badge">
                         <div class="icon">⏰</div>
                         <div>
                             <div style="font-size: 14px; font-weight: 700;">24/7 на площадке</div>
                             <div style="font-size: 11px; color: var(--text-muted);">Монтаж и техническое дежурство</div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Modal -->
+        <div class="video-modal" id="videoModal">
+            <div class="video-modal-overlay" id="videoModalOverlay"></div>
+            <div class="video-modal-content">
+                <div class="video-modal-inner">
+                    <div class="video-modal-header">
+                        <h3 class="video-modal-title">Обращение руководителя</h3>
+                    </div>
+                    <div class="video-modal-video">
+                        <video id="modalVideo" controls preload="metadata" playsinline>
+                            <source src="video/ceo-video.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
                     </div>
                 </div>
             </div>
@@ -172,8 +187,7 @@
                             <li>Презентации и форумы</li>
                         </ul>
                     </div>
-                    <div class="format-card format-card--featured">
-                        <div class="format-card-badge">Популярное</div>
+                    <div class="format-card">
                         <div class="format-card-number">02</div>
                         <div class="format-card-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -494,7 +508,7 @@
                             <div class="review-card-avatar">АК</div>
                             <div>
                                 <div class="review-card-name">Алексей Козлов</div>
-                                <div class="review-card-role">Директор поEvent, Газпром</div>
+                                <div class="review-card-role">Директор по Event, Газпром</div>
                             </div>
                         </div>
                     </div>
@@ -847,6 +861,74 @@
         });
 
         startSlider();
+    </script>
+
+    <!-- Video Modal -->
+    <script>
+        const videoModal = document.getElementById('videoModal');
+        const modalVideo = document.getElementById('modalVideo');
+        let scrollTimeout;
+        let hasShownModal = false; // localStorage.getItem('ceoVideoShown');
+
+        function showModal() {
+            if (hasShownModal) return;
+            
+            videoModal.classList.add('video-modal--active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal() {
+            videoModal.classList.remove('video-modal--active');
+            document.body.style.overflow = '';
+            modalVideo.pause();
+            modalVideo.currentTime = 0;
+            localStorage.setItem('ceoVideoShown', 'true');
+            hasShownModal = true;
+        }
+
+        // Блокировка скролла при открытии модалки
+        function preventScroll(e) {
+            e.preventDefault();
+        }
+
+        modalVideo.addEventListener('ended', hideModal);
+        modalVideo.addEventListener('error', hideModal);
+
+        // Отслеживание скролла с debounce
+        let lastScrollPosition = 0;
+        let isModalOpen = false;
+
+        window.addEventListener('scroll', () => {
+            if (isModalOpen || hasShownModal) return;
+            
+            const currentScroll = window.pageYOffset;
+            const scrollDelta = Math.abs(currentScroll - lastScrollPosition);
+            
+            if (scrollDelta > 50) {
+                isModalOpen = true;
+                lastScrollPosition = currentScroll;
+                
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    showModal();
+                    isModalOpen = false;
+                }, 150);
+            }
+        });
+
+        // Предотвращение скролла при открытом модале
+        document.addEventListener('wheel', (e) => {
+            if (videoModal.classList.contains('video-modal--active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Touch-события для мобильных
+        document.addEventListener('touchmove', (e) => {
+            if (videoModal.classList.contains('video-modal--active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
