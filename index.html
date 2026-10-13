@@ -11,6 +11,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://art13.art/">
     <meta property="og:image" content="https://art13.art/image/og-image.png">
+    <meta name="author" content="Peter Razumkin">
     <link rel="icon" type="image/svg+xml" href="image/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16.png">
@@ -20,8 +21,44 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ===== LOADER ===== */
+        .loader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #0a0a0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader--hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 107, 53, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <div class="header-inner">
@@ -938,7 +975,7 @@
             rootMargin: '0px',
             threshold: 0.15
         };
-
+ 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -950,6 +987,16 @@
 
         document.querySelectorAll('.animate-on-scroll').forEach(el => {
             observer.observe(el);
+        });
+    </script>
+
+    <!-- Loader -->
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.classList.add('loader--hidden');
+            }, 300);
         });
     </script>
 </body>
