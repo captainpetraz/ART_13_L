@@ -46,40 +46,6 @@
             font-size: 15px;
             color: var(--text-secondary);
             line-height: 1.7;
-            margin-bottom: 40px;
-        }
-
-        .error-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 32px;
-            font-family: var(--font);
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .error-btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.3);
-        }
-
-        .error-btn svg {
-            transition: transform 0.3s;
-        }
-
-        .error-btn:hover svg {
-            transform: translateX(-4px);
         }
 
         @media (max-width: 768px) {
@@ -96,13 +62,6 @@
                 <div class="error-code">404</div>
                 <h1 class="error-title">Страница не найдена</h1>
                 <p class="error-desc">К сожалению, страница, которую вы ищете, не существует или была перемещена.</p>
-                <a href="index.html" class="error-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    На главную
-                </a>
             </div>
         </section>
     </main>
