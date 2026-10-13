@@ -42,6 +42,50 @@
 
     <!-- Hero -->
     <section class="hero">
+        <!-- Слайдер фона -->
+        <div class="hero-slider" id="heroSlider">
+            <div class="hero-slide hero-slide--active">
+                <img src="slider/1.jpg" alt="ART 13 — Проект 1">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/2.jpg" alt="ART 13 — Проект 2">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/3.jpg" alt="ART 13 — Проект 3">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/4.jpg" alt="ART 13 — Проект 4">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/5.jpg" alt="ART 13 — Проект 5">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/6.jpg" alt="ART 13 — Проект 6">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/7.jpg" alt="ART 13 — Проект 7">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/8.jpg" alt="ART 13 — Проект 8">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/9.jpg" alt="ART 13 — Проект 9">
+                <div class="hero-slide-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="slider/10.jpg" alt="ART 13 — Проект 10">
+                <div class="hero-slide-overlay"></div>
+            </div>
+        </div>
+
         <div class="container">
             <div class="hero-inner">
                 <div class="hero-content">
@@ -82,6 +126,20 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Slider Navigation -->
+        <div class="hero-slider-nav" id="heroSliderNav">
+            <button class="hero-slider-dot hero-slider-dot--active" data-slide="0" aria-label="Слайд 1"></button>
+            <button class="hero-slider-dot" data-slide="1" aria-label="Слайд 2"></button>
+            <button class="hero-slider-dot" data-slide="2" aria-label="Слайд 3"></button>
+            <button class="hero-slider-dot" data-slide="3" aria-label="Слайд 4"></button>
+            <button class="hero-slider-dot" data-slide="4" aria-label="Слайд 5"></button>
+            <button class="hero-slider-dot" data-slide="5" aria-label="Слайд 6"></button>
+            <button class="hero-slider-dot" data-slide="6" aria-label="Слайд 7"></button>
+            <button class="hero-slider-dot" data-slide="7" aria-label="Слайд 8"></button>
+            <button class="hero-slider-dot" data-slide="8" aria-label="Слайд 9"></button>
+            <button class="hero-slider-dot" data-slide="9" aria-label="Слайд 10"></button>
         </div>
     </section>
 
@@ -748,6 +806,47 @@
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
+    </script>
+
+    <!-- Hero Slider -->
+    <script>
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.hero-slider-dot');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function goToSlide(index) {
+            slides[currentSlide].classList.remove('hero-slide--active');
+            dots[currentSlide].classList.remove('hero-slider-dot--active');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('hero-slide--active');
+            dots[currentSlide].classList.add('hero-slider-dot--active');
+        }
+
+        function nextSlide() {
+            const next = (currentSlide + 1) % slides.length;
+            goToSlide(next);
+        }
+
+        function startSlider() {
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function resetSlider() {
+            clearInterval(slideInterval);
+            startSlider();
+        }
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                goToSlide(index);
+                resetSlider();
+            });
+        });
+
+        startSlider();
     </script>
 </body>
 </html>
