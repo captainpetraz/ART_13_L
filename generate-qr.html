@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор QR-кода</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 24px;
+        }
+        button {
+            padding: 14px 32px;
+            font-size: 14px;
+            font-weight: 700;
+            background: #FF6B35;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ff8555;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #preview {
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .status {
+            font-size: 13px;
+            color: #8a8a9a;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR-код для art13.art</h1>
+    <div id="preview"></div>
+    <button id="downloadBtn" disabled>Скачать SVG</button>
+    <div class="status" id="status">Нажмите "Сгенерировать"</div>
+
+    <script>
+        const url = 'https://art13.art/';
+        let svgContent = '';
+
+        function generateQRCode() {
+            const status = document.getElementById('status');
+            const btn = document.getElementById('downloadBtn');
+            const preview = document.getElementById('preview');
+            
+            status.textContent = 'Генерация...';
+            btn.disabled = true;
+
+            try {
+                // Создаём QR-код (версия 4, уровень коррекции M)
+                const q = qrcode(4, 'M');
+                q.addData(url);
+                q.make();
+
+                const moduleCount = q.getModuleCount();
+                const cellSize = 8;
+                const margin = 32;
+                const size = moduleCount * cellSize + margin * 2;
+
+                // Строим SVG
+                let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+                svg += `<rect width="${size}" height="${size}" fill="#ffffff"/>`;
+
+                for (let row = 0; row < moduleCount; row++) {
+                    for (let col = 0; col < moduleCount; col++) {
+                        if (q.isDark(row, col)) {
+                            const x = margin + col * cellSize;
+                            const y = margin + row * cellSize;
+                            svg += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="#0a0a0f"/>`;
+                        }
+                    }
+                }
+
+                svg += '</svg>';
+                svgContent = svg;
+
+                preview.innerHTML = svg;
+                status.textContent = 'Готово! Нажмите "Скачать SVG"';
+                btn.disabled = false;
+            } catch (e) {
+                status.textContent = 'Ошибка: ' + e.message;
+            }
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            if (!svgContent) return;
+
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'qr-code.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Автогенерация при загрузке
+        generateQRCode();
+    </script>
+</body>
+</html>
