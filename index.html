@@ -169,6 +169,7 @@
                 <div class="video-modal-inner">
                     <div class="video-modal-header">
                         <h3 class="video-modal-title">Обращение руководителя</h3>
+                        <button class="video-modal-close" id="videoModalClose">&times;</button>
                     </div>
                     <div class="video-modal-video">
                         <video id="modalVideo" controls preload="metadata" playsinline>
@@ -404,7 +405,7 @@
                     <p class="section-desc">Реализованные проекты для ведущих компаний и мероприятий России</p>
                 </div>
                 <div class="portfolio-grid">
-                    <div class="portfolio-card animate-on-scroll" data-delay="1">
+                    <a href="portfolio-01.html" class="portfolio-card animate-on-scroll" data-delay="1">
                         <div class="portfolio-card-image" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
                             <div class="portfolio-card-overlay">
                                 <span>Смотреть кейс</span>
@@ -422,8 +423,8 @@
                                 <span>3 дня</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="portfolio-card animate-on-scroll" data-delay="2">
+                    </a>
+                    <a href="portfolio-02.html" class="portfolio-card animate-on-scroll" data-delay="2">
                         <div class="portfolio-card-image" style="background: linear-gradient(135deg, #2d1b2e, #1a1a2e);">
                             <div class="portfolio-card-overlay">
                                 <span>Смотреть кейс</span>
@@ -441,8 +442,8 @@
                                 <span>2 дня</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="portfolio-card animate-on-scroll" data-delay="3">
+                    </a>
+                    <a href="portfolio-03.html" class="portfolio-card animate-on-scroll" data-delay="3">
                         <div class="portfolio-card-image" style="background: linear-gradient(135deg, #1b2e1b, #1a2e2e);">
                             <div class="portfolio-card-overlay">
                                 <span>Смотреть кейс</span>
@@ -460,8 +461,8 @@
                                 <span>5 дней</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="portfolio-card animate-on-scroll" data-delay="4">
+                    </a>
+                    <a href="portfolio-04.html" class="portfolio-card animate-on-scroll" data-delay="4">
                         <div class="portfolio-card-image" style="background: linear-gradient(135deg, #2e2a1b, #2e1b1b);">
                             <div class="portfolio-card-overlay">
                                 <span>Смотреть кейс</span>
@@ -479,7 +480,7 @@
                                 <span>1 день</span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </section>          
@@ -631,23 +632,32 @@
                             </div>
                         </div>
                     </div>
-                    <form class="calc-form animate-on-scroll animate--right" id="contactForm">
-                        <div class="form-group">
-                            <label for="name">Ваше имя</label>
-                            <input type="text" id="name" name="name" placeholder="Иван Иванов" required>
+                    <form class="calc-form animate-on-scroll animate--right" id="contactForm" novalidate>
+                        <!-- Honeypot — защита от ботов (скрытое поле) -->
+                        <div class="form-honeypot">
+                            <label for="website">Не заполняйте это поле</label>
+                            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div class="form-group" data-validate="required">
+                            <label for="name">Ваше имя <span class="required-star">*</span></label>
+                            <input type="text" id="name" name="name" placeholder="Иван Иванов" required autocomplete="name">
+                            <span class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label for="company">Компания</label>
-                            <input type="text" id="company" name="company" placeholder="Название компании">
+                            <input type="text" id="company" name="company" placeholder="Название компании" autocomplete="organization">
                         </div>
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email" placeholder="ivan@company.ru" required>
+                            <div class="form-group" data-validate="email">
+                                <label for="email">Email <span class="required-star">*</span></label>
+                                <input type="email" id="email" name="email" placeholder="ivan@company.ru" required autocomplete="email">
+                                <span class="error-message"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="phone">Телефон</label>
-                                <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__">
+                            <div class="form-group" data-validate="phone">
+                                <label for="phone">Телефон <span class="required-star">*</span></label>
+                                <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required autocomplete="tel">
+                                <span class="error-message"></span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -661,9 +671,10 @@
                             </select>
                         </div>
                         <div class="form-row">
-                            <div class="form-group">
+                            <div class="form-group" data-validate="future-date">
                                 <label for="date">Дата мероприятия</label>
-                                <input type="date" id="date" name="date">
+                                <input type="date" id="date" name="date" autocomplete="bday-event">
+                                <span class="error-message"></span>
                             </div>
                             <div class="form-group">
                                 <label for="budget">Бюджет</label>
@@ -677,18 +688,68 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="message">Описание проекта</label>
-                            <textarea id="message" name="message" rows="4" placeholder="Расскажите о вашем мероприятии: масштаб, площадка, особые требования..."></textarea>
+                            <label for="message">Описание проекта <span class="required-star">*</span></label>
+                            <textarea id="message" name="message" rows="4" placeholder="Расскажите о вашем мероприятии: масштаб, площадка, особые требования..." required></textarea>
+                            <span class="error-message"></span>
                         </div>
-                        <button type="submit" class="btn btn-primary form-submit">Отправить заявку</button>
-                        <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></p>
+
+                        <!-- Согласие на обработку данных -->
                         <div class="form-consent" id="formConsent">
                             <label class="consent-label">
-                                <input type="checkbox" id="consentCheck" required>
-                                <span>Я согласен(на) на <a href="privacy.html" target="_blank">обработку вводимых данных</a></span>
+                                <input type="checkbox" id="consentCheck" name="consent" required>
+                                <span>Согласие на обработку <a href="#" class="data-info-link" id="dataInfoLink">вводимых данных</a></span>
                             </label>
+                            <span class="error-message" id="consentError"></span>
                         </div>
+
+                        <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></p>
+
+                        <button type="submit" class="btn btn-primary form-submit" id="submitBtn">
+                            <span class="btn-text">Отправить заявку</span>
+                            <span class="btn-loading" style="display:none;">
+                                <svg class="loading-spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                                </svg>
+                                Отправка...
+                            </span>
+                            <span class="btn-success" style="display:none;">✓ Заявка отправлена</span>
+                        </button>
                     </form>
+
+                    <!-- Модальное окно — Что такое вводимые данные -->
+                    <div class="data-modal" id="dataModal">
+                        <div class="data-modal-overlay" id="dataModalOverlay"></div>
+                        <div class="data-modal-content">
+                            <div class="data-modal-header">
+                                <h3 class="data-modal-title">Что такое вводимые данные</h3>
+                                <button class="data-modal-close" id="dataModalClose">&times;</button>
+                            </div>
+                            <div class="data-modal-body">
+                                <p><strong>Вводимые данные</strong> — Вводимые данные в форму заявки на сайте art13.art — это информация, которую пользователь самостоятельно заполняет в поля веб-формы, чтобы оставить запрос: связаться с компанией, записаться на услугу, запросить консультацию или информацию о продукте.</p>
+                                
+                                <h4>Какие данные мы собираем:</h4>
+                                <ul>
+                                    <li><strong>Обязательные:</strong> ваше имя, email и номер телефона — для связи с вами и подготовки коммерческого предложения</li>
+                                    <li><strong>Необязательные:</strong> название компании, формат мероприятия, дата, бюджет и описание проекта — для более точного расчёта стоимости</li>
+                                </ul>
+                                
+                                <h4>Зачем мы это делаем:</h4>
+                                <ul>
+                                    <li>Обработка вашей заявки и подготовка индивидуального предложения</li>
+                                    <li>Связь с вами для уточнения деталей проекта</li>
+                                    <li>Улучшение качества наших услуг</li>
+                                </ul>
+                                
+                                <h4>Как мы их защищаем:</h4>
+                                <p>Мы принимаем все необходимые организационные и технические меры для защиты ваших данных от несанкционированного доступа. Данные не передаются третьим лицам, за исключением случаев, предусмотренных законодательством РФ.</p>
+                                
+                                <p>Подробную информацию см. в <a href="privacy.html" target="_blank">полной Политике конфиденциальности</a>.</p>
+                            </div>
+                            <div class="data-modal-footer">
+                                <button class="btn btn-primary" id="dataModalAccept">Понятно</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -810,17 +871,194 @@
     <!-- Form AJAX Handler -->
     <script>
         const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+        const btnSuccess = submitBtn.querySelector('.btn-success');
 
+        // Маска телефона
+        const phoneInput = document.getElementById('phone');
+        
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Если начинается с 8, заменяем на 7
+            if (value.startsWith('8') && value.length > 1) {
+                value = '7' + value.slice(1);
+            }
+            // Если не начинается с 7, добавляем 7
+            if (!value.startsWith('7') && value.length > 0) {
+                value = '7' + value;
+            }
+            
+            let formatted = '';
+            if (value.length > 0) {
+                formatted = '+7';
+            }
+            if (value.length > 1) {
+                formatted += ' (' + value.slice(1, 4);
+            }
+            if (value.length > 4) {
+                formatted += ') ' + value.slice(4, 7);
+            }
+            if (value.length > 7) {
+                formatted += '-' + value.slice(7, 9);
+            }
+            if (value.length > 9) {
+                formatted += '-' + value.slice(9, 11);
+            }
+            
+            e.target.value = formatted;
+        });
+
+        phoneInput.addEventListener('focus', function(e) {
+            if (!e.target.value) {
+                e.target.value = '+7';
+            }
+        });
+
+        phoneInput.addEventListener('blur', function(e) {
+            if (e.target.value === '+7' || e.target.value === '+7 ') {
+                e.target.value = '';
+            }
+        });
+
+        // Валидация
+        function validateField(group) {
+            const type = group.dataset.validate;
+            const input = group.querySelector('input, select, textarea');
+            const errorSpan = group.querySelector('.error-message');
+            let error = '';
+
+            if (!type) return true;
+
+            switch(type) {
+                case 'required':
+                    if (!input.value.trim()) {
+                        error = 'Это поле обязательно для заполнения';
+                    }
+                    break;
+                case 'email':
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!input.value.trim()) {
+                        error = 'Это поле обязательно для заполнения';
+                    } else if (!emailRegex.test(input.value.trim())) {
+                        error = 'Введите корректный email (например: name@example.com)';
+                    }
+                    break;
+                case 'phone':
+                    const digits = input.value.replace(/\D/g, '');
+                    if (!input.value.trim()) {
+                        error = 'Это поле обязательно для заполнения';
+                    } else if (digits.length < 11) {
+                        error = 'Введите полный номер телефона';
+                    }
+                    break;
+                case 'future-date':
+                    if (input.value) {
+                        const selectedDate = new Date(input.value);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        if (selectedDate < today) {
+                            error = 'Дата не может быть в прошлом';
+                        }
+                    }
+                    break;
+            }
+
+            // Очистка предыдущего состояния
+            group.classList.remove('has-error', 'success');
+            if (errorSpan) errorSpan.classList.remove('visible');
+
+            if (error) {
+                group.classList.add('has-error');
+                if (errorSpan) {
+                    errorSpan.textContent = error;
+                    errorSpan.classList.add('visible');
+                }
+                return false;
+            }
+
+            if (input && input.value.trim()) {
+                group.classList.add('success');
+            }
+
+            return true;
+        }
+
+        // Валидация при потере фокуса
+        document.querySelectorAll('.form-group[data-validate]').forEach(group => {
+            const input = group.querySelector('input, select, textarea');
+            if (input) {
+                input.addEventListener('blur', () => validateField(group));
+                input.addEventListener('input', () => {
+                    if (group.classList.contains('has-error')) {
+                        validateField(group);
+                    }
+                });
+            }
+        });
+
+        // Валидация чекбокса согласия
+        const consentCheck = document.getElementById('consentCheck');
+        const formConsent = document.getElementById('formConsent');
+        
+        consentCheck.addEventListener('change', () => {
+            formConsent.classList.remove('has-error');
+            const consentError = document.getElementById('consentError');
+            if (consentError) consentError.classList.remove('visible');
+        });
+
+        function validateForm() {
+            let isValid = true;
+
+            // Валидация всех полей
+            document.querySelectorAll('.form-group[data-validate]').forEach(group => {
+                if (!validateField(group)) {
+                    isValid = false;
+                }
+            });
+
+            // Валидация чекбокса
+            if (!consentCheck.checked) {
+                formConsent.classList.add('has-error');
+                const consentError = document.getElementById('consentError');
+                if (consentError) {
+                    consentError.textContent = 'Необходимо дать согласие на обработку данных';
+                    consentError.classList.add('visible');
+                }
+                isValid = false;
+            }
+
+            // Подсветка первой ошибки
+            if (!isValid) {
+                const firstError = contactForm.querySelector('.has-error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const firstInput = firstError.querySelector('input, select, textarea');
+                    if (firstInput) firstInput.focus();
+                }
+            }
+
+            return isValid;
+        }
+
+        // Отправка формы
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const formData = new FormData(this);
-            const submitBtn = this.querySelector('.form-submit');
-            const originalText = submitBtn.textContent;
+            if (!validateForm()) return;
 
             // Блокируем кнопку и показываем загрузку
+            const formData = new FormData(this);
+            
+            // Убираем honeypot из отправки
+            formData.delete('website');
+
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Отправка...';
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-flex';
+            btnSuccess.style.display = 'none';
 
             fetch('send.php', {
                 method: 'POST',
@@ -829,25 +1067,55 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    submitBtn.textContent = '✓ Заявка отправлена';
-                    submitBtn.style.background = '#22c55e';
+                    btnLoading.style.display = 'none';
+                    btnSuccess.style.display = 'inline-flex';
+                    btnSuccess.style.color = '#fff';
                     this.reset();
+                    
+                    // Очистка состояний валидации
+                    document.querySelectorAll('.form-group').forEach(g => {
+                        g.classList.remove('has-error', 'success');
+                    });
 
                     setTimeout(() => {
                         submitBtn.disabled = false;
-                        submitBtn.textContent = originalText;
-                        submitBtn.style.background = '';
-                    }, 3000);
+                        btnText.style.display = 'inline';
+                        btnLoading.style.display = 'none';
+                        btnSuccess.style.display = 'none';
+                    }, 4000);
                 } else {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                    alert('Ошибка: ' + data.message);
+                    btnText.style.display = 'inline';
+                    btnLoading.style.display = 'none';
+                    
+                    // Показываем ошибку
+                    const errorMsg = document.createElement('div');
+                    errorMsg.style.cssText = 'margin-top: 12px; padding: 12px 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; color: #ef4444; font-size: 13px; text-align: center;';
+                    errorMsg.textContent = data.message || 'Произошла ошибка при отправке. Попробуйте позже.';
+                    
+                    const existingError = contactForm.querySelector('.form-submit-error');
+                    if (existingError) existingError.remove();
+                    errorMsg.classList.add('form-submit-error');
+                    contactForm.appendChild(errorMsg);
+                    
+                    setTimeout(() => errorMsg.remove(), 5000);
                 }
             })
             .catch(error => {
                 submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-                alert('Ошибка сети. Попробуйте позже.');
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                
+                const errorMsg = document.createElement('div');
+                errorMsg.style.cssText = 'margin-top: 12px; padding: 12px 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; color: #ef4444; font-size: 13px; text-align: center;';
+                errorMsg.textContent = 'Ошибка сети. Проверьте подключение и попробуйте снова.';
+                
+                const existingError = contactForm.querySelector('.form-submit-error');
+                if (existingError) existingError.remove();
+                errorMsg.classList.add('form-submit-error');
+                contactForm.appendChild(errorMsg);
+                
+                setTimeout(() => errorMsg.remove(), 5000);
             });
         });
     </script>
@@ -904,8 +1172,11 @@
     <script>
         const videoModal = document.getElementById('videoModal');
         const modalVideo = document.getElementById('modalVideo');
+        const videoModalClose = document.getElementById('videoModalClose');
         let scrollTimeout;
-        let hasShownModal = false; // localStorage.getItem('ceoVideoShown');
+
+        // Проверяем localStorage — если пользователь уже смотрел видео, не показываем снова
+        let hasShownModal = localStorage.getItem('ceoVideoShown') === 'true';
 
         function showModal() {
             if (hasShownModal) return;
@@ -923,13 +1194,9 @@
             hasShownModal = true;
         }
 
-        // Блокировка скролла при открытии модалки
-        function preventScroll(e) {
-            e.preventDefault();
-        }
-
         modalVideo.addEventListener('ended', hideModal);
         modalVideo.addEventListener('error', hideModal);
+        videoModalClose.addEventListener('click', hideModal);
 
         // Отслеживание скролла с debounce
         let lastScrollPosition = 0;
@@ -998,6 +1265,60 @@
                 loader.classList.add('loader--hidden');
             }, 300);
         });
+    </script>
+
+    <!-- Data Info Modal -->
+    <script>
+        const dataModal = document.getElementById('dataModal');
+        const dataModalOverlay = document.getElementById('dataModalOverlay');
+        const dataModalClose = document.getElementById('dataModalClose');
+        const dataModalAccept = document.getElementById('dataModalAccept');
+        const dataInfoLink = document.getElementById('dataInfoLink');
+
+        function openDataModal() {
+            dataModal.classList.add('data-modal--active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDataModal(autoCheck) {
+            dataModal.classList.remove('data-modal--active');
+            document.body.style.overflow = '';
+            
+            // Автоматически ставим галочку, если нажали "Понятно"
+            if (autoCheck) {
+                consentCheck.checked = true;
+                formConsent.classList.remove('has-error');
+                const consentError = document.getElementById('consentError');
+                if (consentError) consentError.classList.remove('visible');
+            }
+        }
+
+        dataInfoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openDataModal();
+        });
+
+        dataModalClose.addEventListener('click', () => closeDataModal(false));
+        dataModalAccept.addEventListener('click', () => closeDataModal(true));
+        dataModalOverlay.addEventListener('click', () => closeDataModal(false));
+
+        document.addEventListener('keydown', (e) => {
+            if (!dataModal.classList.contains('data-modal--active')) return;
+            if (e.key === 'Escape') closeDataModal();
+        });
+
+        // Предотвращение скролла при открытом модале
+        document.addEventListener('wheel', (e) => {
+            if (dataModal.classList.contains('data-modal--active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (dataModal.classList.contains('data-modal--active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
