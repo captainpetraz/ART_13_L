@@ -179,7 +179,7 @@
                         <button class="video-modal-close" id="videoModalClose">&times;</button>
                     </div>
                     <div class="video-modal-video">
-                        <video id="modalVideo" controls preload="metadata" playsinline>
+                        <video id="modalVideo" playsinline>
                             <source src="video/ceo-video.mp4" type="video/mp4">
                             Ваш браузер не поддерживает видео.
                         </video>
@@ -1063,6 +1063,7 @@
             formData.delete('website');
 
             submitBtn.disabled = true;
+            submitBtn.classList.add('btn--loading');
             btnText.style.display = 'none';
             btnLoading.style.display = 'inline-flex';
             btnSuccess.style.display = 'none';
@@ -1074,9 +1075,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Показываем успех — зелёная кнопка
                     btnLoading.style.display = 'none';
                     btnSuccess.style.display = 'inline-flex';
-                    btnSuccess.style.color = '#fff';
+                    submitBtn.classList.remove('btn--loading');
+                    submitBtn.style.background = '#22c55e';
+                    submitBtn.style.borderColor = '#22c55e';
+                    submitBtn.style.outline = 'none';
+                    
                     this.reset();
                     
                     // Очистка состояний валидации
@@ -1086,12 +1092,17 @@
 
                     setTimeout(() => {
                         submitBtn.disabled = false;
+                        submitBtn.style.background = '';
+                        submitBtn.style.borderColor = '';
                         btnText.style.display = 'inline';
                         btnLoading.style.display = 'none';
                         btnSuccess.style.display = 'none';
                     }, 4000);
                 } else {
                     submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn--loading');
+                    submitBtn.style.background = '';
+                    submitBtn.style.borderColor = '';
                     btnText.style.display = 'inline';
                     btnLoading.style.display = 'none';
                     
@@ -1110,6 +1121,9 @@
             })
             .catch(error => {
                 submitBtn.disabled = false;
+                submitBtn.classList.remove('btn--loading');
+                submitBtn.style.background = '';
+                submitBtn.style.borderColor = '';
                 btnText.style.display = 'inline';
                 btnLoading.style.display = 'none';
                 
@@ -1177,69 +1191,71 @@
 
     <!-- Video Modal -->
     <script>
-        const videoModal = document.getElementById('videoModal');
-        const modalVideo = document.getElementById('modalVideo');
-        const videoModalClose = document.getElementById('videoModalClose');
-        let scrollTimeout;
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoModal = document.getElementById('videoModal');
+            const modalVideo = document.getElementById('modalVideo');
+            const videoModalClose = document.getElementById('videoModalClose');
+            let scrollTimeout;
 
-        // Проверяем localStorage — если пользователь уже смотрел видео, не показываем снова
-        let hasShownModal = localStorage.getItem('ceoVideoShown') === 'true';
+            // sessionStorage — хранится только до закрытия браузера
+            let hasShownModal = sessionStorage.getItem('ceoVideoShown') === 'true';
 
-        function showModal() {
-            if (hasShownModal) return;
-            
-            videoModal.classList.add('video-modal--active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideModal() {
-            videoModal.classList.remove('video-modal--active');
-            document.body.style.overflow = '';
-            modalVideo.pause();
-            modalVideo.currentTime = 0;
-            localStorage.setItem('ceoVideoShown', 'true');
-            hasShownModal = true;
-        }
-
-        modalVideo.addEventListener('ended', hideModal);
-        modalVideo.addEventListener('error', hideModal);
-        videoModalClose.addEventListener('click', hideModal);
-
-        // Отслеживание скролла с debounce
-        let lastScrollPosition = 0;
-        let isModalOpen = false;
-
-        window.addEventListener('scroll', () => {
-            if (isModalOpen || hasShownModal) return;
-            
-            const currentScroll = window.pageYOffset;
-            const scrollDelta = Math.abs(currentScroll - lastScrollPosition);
-            
-            if (scrollDelta > 50) {
-                isModalOpen = true;
-                lastScrollPosition = currentScroll;
+            function showModal() {
+                if (hasShownModal) return;
                 
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(() => {
-                    showModal();
-                    isModalOpen = false;
-                }, 150);
+                videoModal.classList.add('video-modal--active');
+                document.body.style.overflow = 'hidden';
             }
+
+            function hideModal() {
+                videoModal.classList.remove('video-modal--active');
+                document.body.style.overflow = '';
+                modalVideo.pause();
+                modalVideo.currentTime = 0;
+                sessionStorage.setItem('ceoVideoShown', 'true');
+                hasShownModal = true;
+            }
+
+            modalVideo.addEventListener('ended', hideModal);
+            modalVideo.addEventListener('error', hideModal);
+            videoModalClose.addEventListener('click', hideModal);
+
+            // Отслеживание скролла с debounce
+            let lastScrollPosition = 0;
+            let isModalOpen = false;
+
+            window.addEventListener('scroll', () => {
+                if (isModalOpen || hasShownModal) return;
+                
+                const currentScroll = window.pageYOffset;
+                const scrollDelta = Math.abs(currentScroll - lastScrollPosition);
+                
+                if (scrollDelta > 50) {
+                    isModalOpen = true;
+                    lastScrollPosition = currentScroll;
+                    
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        showModal();
+                        isModalOpen = false;
+                    }, 150);
+                }
+            });
+
+            // Предотвращение скролла при открытом модале
+            document.addEventListener('wheel', (e) => {
+                if (videoModal.classList.contains('video-modal--active')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Touch-события для мобильных
+            document.addEventListener('touchmove', (e) => {
+                if (videoModal.classList.contains('video-modal--active')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         });
-
-        // Предотвращение скролла при открытом модале
-        document.addEventListener('wheel', (e) => {
-            if (videoModal.classList.contains('video-modal--active')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        // Touch-события для мобильных
-        document.addEventListener('touchmove', (e) => {
-            if (videoModal.classList.contains('video-modal--active')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
     </script>
 
     <!-- Scroll Animations -->
