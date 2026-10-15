@@ -77,6 +77,13 @@
         </div>
     </header>
 
+    <!-- Информационная строка -->
+    <div class="info-banner" id="infoBanner">
+        <div class="container">
+            <p class="info-banner-text">⚠️ На данной странице ведутся работы. Скоро здесь появится настоящий контент.</p>
+        </div>
+    </div>
+
     <!-- Hero -->
     <section class="hero">
         <!-- Слайдер фона -->
@@ -1319,6 +1326,18 @@
                 e.preventDefault();
             }
         }, { passive: false });
+    </script>
+
+    <!-- Info Banner Control -->
+    <script>
+        const infoBanner = document.getElementById('infoBanner');
+
+        // ← ВКЛ/ВЫКЛ баннера: true = показывать, false = скрыть
+        const SHOW_INFO_BANNER = true;
+
+        if (!SHOW_INFO_BANNER) {
+            infoBanner.classList.add('info-banner--hidden');
+        }
     </script>
 </body>
 </html>

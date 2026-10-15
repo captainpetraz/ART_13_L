@@ -5,6 +5,61 @@
     box-sizing: border-box;
 }
 
+/* ===== INFO BANNER ===== */
+.info-banner {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    padding: 14px 0;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.info-banner--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.info-banner .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.info-banner-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.info-banner-close {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.info-banner-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== HEADER ===== */
+
 :root {
     --bg-primary: #0a0a0f;
     --bg-secondary: #111118;
@@ -228,7 +283,7 @@ img {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding: 120px 0 80px;
+    padding: 170px 0 80px;
     position: relative;
     overflow: hidden;
     background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, transparent 50%);
