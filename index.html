@@ -1197,8 +1197,8 @@
             const videoModalClose = document.getElementById('videoModalClose');
             let scrollTimeout;
 
-            // sessionStorage — хранится только до закрытия браузера
-            let hasShownModal = sessionStorage.getItem('ceoVideoShown') === 'true';
+            // localStorage — хранится между страницами и сессиями
+            let hasShownModal = localStorage.getItem('ceoVideoShown') === 'true';
 
             function showModal() {
                 if (hasShownModal) return;
@@ -1212,7 +1212,7 @@
                 document.body.style.overflow = '';
                 modalVideo.pause();
                 modalVideo.currentTime = 0;
-                sessionStorage.setItem('ceoVideoShown', 'true');
+                localStorage.setItem('ceoVideoShown', 'true');
                 hasShownModal = true;
             }
 
