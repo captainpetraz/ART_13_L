@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Animation — Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .demo-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .demo-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-title::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: var(--accent);
+            display: inline-block;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .demo-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .demo-full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-title">Typing Animation Demo</div>
+        
+        <div class="demo-grid">
+            <!-- Вариант 1: С окном терминала -->
+            <div>
+                <div class="demo-label">С окном терминала</div>
+                <div class="typing-block">
+                    <div class="typing-block-header">
+                        <div class="typing-block-dots">
+                            <div class="typing-block-dot"></div>
+                            <div class="typing-block-dot"></div>
+                            <div class="typing-block-dot"></div>
+                        </div>
+                        <span class="typing-block-title">thoughts.txt</span>
+                    </div>
+                    <div class="typing-text-container">
+                        <span class="typing-text" id="typing-text-1"></span>
+                    </div>
+                    <div class="typing-progress">
+                        <div class="typing-progress-bar">
+                            <div class="typing-progress-fill" id="progress-fill-1"></div>
+                        </div>
+                        <span class="typing-progress-text" id="progress-text-1">0%</span>
+                    </div>
+                    <div class="typing-phrases-counter" id="counter-1"></div>
+                </div>
+            </div>
+
+            <!-- Вариант 2: Минималистичный -->
+            <div>
+                <div class="demo-label">Минималистичный</div>
+                <div class="typing-block typing-block--minimal">
+                    <div class="typing-text-container">
+                        <span class="typing-text" id="typing-text-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вариант 3: Полный блок на всю ширину -->
+            <div class="demo-full-width">
+                <div class="demo-label">Полный блок (герой-секция)</div>
+                <div class="typing-block typing-block--hero">
+                    <div class="typing-block-header">
+                        <div class="typing-block-dots">
+                            <div class="typing-block-dot"></div>
+                            <div class="typing-block-dot"></div>
+                            <div class="typing-block-dot"></div>
+                        </div>
+                        <span class="typing-block-title">hero-message</span>
+                    </div>
+                    <div class="typing-text-container">
+                        <span class="typing-text" id="typing-text-3"></span>
+                    </div>
+                    <div class="typing-progress">
+                        <div class="typing-progress-bar">
+                            <div class="typing-progress-fill" id="progress-fill-3"></div>
+                        </div>
+                        <span class="typing-progress-text" id="progress-text-3">0%</span>
+                    </div>
+                    <div class="typing-phrases-counter" id="counter-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="typing-animation.js"></script>
+    <script>
+        // === Вариант 1: Терминал с прогрессом ===
+        const typer1 = new TypingAnimation({
+            element: document.getElementById('typing-text-1'),
+            phrases: [
+                'Привет! Мы — ART 13.',
+                'Создаём декорации для мероприятий любого масштаба.',
+                'Свой цех 2000 м². Монтаж в 40 городах.',
+                'От фотозоны до сцены на 5000 зрителей.',
+                'Работаем 24/7 — без простоев и задержек.'
+            ],
+            errorChance: 0.10,
+            baseSpeed: 70,
+            pauseAfterPhrase: 3000,
+            pauseBeforeDelete: 500,
+            deleteSpeed: 50,
+            maxConsecutiveErrors: 2
+        });
+
+        // === Вариант 2: Минималистичный ===
+        const typer2 = new TypingAnimation({
+            element: document.getElementById('typing-text-2'),
+            phrases: [
+                'Event-продакшен полного цикла',
+                'Проектирование → Производство → Монтаж',
+                '18 лет на рынке',
+                '1000+ проектов'
+            ],
+            errorChance: 0.06,
+            baseSpeed: 80,
+            pauseAfterPhrase: 2500,
+            pauseBeforeDelete: 300,
+            deleteSpeed: 45,
+            maxConsecutiveErrors: 1
+        });
+
+        // === Вариант 3: Герой-блок ===
+        const typer3 = new TypingAnimation({
+            element: document.getElementById('typing-text-3'),
+            phrases: [
+                'Мы там, где ваше мероприятие!',
+                'Производственная компания полного цикла',
+                'Сцены, свет, звук — под ключ',
+                '1200 м² собственного цеха',
+                'Монтажные бригады в 40 городах России'
+            ],
+            errorChance: 0.07,
+            baseSpeed: 60,
+            pauseAfterPhrase: 3500,
+            pauseBeforeDelete: 600,
+            deleteSpeed: 45,
+            maxConsecutiveErrors: 2
+        });
+
+        // === Запуск с прогресс-баром ===
+        function startWithProgress(typer, progressFillId, progressTextId, counterId) {
+            typer.start();
+            
+            const progressFill = document.getElementById(progressFillId);
+            const progressText = document.getElementById(progressTextId);
+            const counter = document.getElementById(counterId);
+            
+            // Обновляем прогресс
+            const checkInterval = setInterval(() => {
+                if (!typer.typing) {
+                    clearInterval(checkInterval);
+                    return;
+                }
+                
+                const phraseIndex = typer.currentPhraseIndex % typer.phrases.length;
+                const currentPhrase = typer.phrases[phraseIndex];
+                const totalPhrases = typer.phrases.length;
+                
+                // Прогресс внутри фразы
+                const textLength = typer.element.textContent.length;
+                const phraseLength = currentPhrase.length;
+                const progress = Math.min(100, Math.round((textLength / phraseLength) * 100));
+                
+                if (progressFill) {
+                    progressFill.style.width = progress + '%';
+                }
+                if (progressText) {
+                    progressText.textContent = progress + '%';
+                }
+                if (counter) {
+                    counter.textContent = `фраза ${phraseIndex + 1} из ${totalPhrases}`;
+                }
+            }, 100);
+        }
+
+        // Запускаем все три варианта
+        document.addEventListener('DOMContentLoaded', () => {
+            startWithProgress(typer1, 'progress-fill-1', 'progress-text-1', 'counter-1');
+            typer2.start();
+            startWithProgress(typer3, 'progress-fill-3', 'progress-text-3', 'counter-3');
+        });
+    </script>
+</body>
+</html>
