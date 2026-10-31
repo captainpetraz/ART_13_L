@@ -134,10 +134,11 @@
             <div class="hero-inner">
                 <div class="hero-content">
                 <div class="hero-badge animate-on-scroll">
-                    <span>Event-продакшен</span> · создаем атмосферу ваших событий
+                    <span>Event-production</span> · создаем атмосферу ваших событий
                 </div>
                 <div class="hero-typing animate-on-scroll" style="transition-delay: 0.1s;">
-                    <span class="typing-text" id="hero-typing-text"></span>
+                    <div class="typing-line typing-line--static">Мы там,</div>
+                    <div class="typing-line"><span class="typing-text" id="hero-typing-text"></span></div>
                 </div>
                 <p class="hero-text animate-on-scroll" style="transition-delay: 0.2s;">
                     ART-13 — рекламно-производственная компания полного цикла. Проектируем, производим и монтируем декорации для мероприятий любого масштаба. Свой цех 1 200 м² и монтажные бригады проффесионалов.
@@ -164,7 +165,7 @@
                         <div class="icon">⏰</div>
                         <div>
                             <div style="font-size: 14px; font-weight: 700;">24/7 на площадке</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">Монтаж и техническое дежурство</div>
+                            <div style="font-size: 11px; color: #ffffff;">Монтаж и техническое дежурство</div>
                         </div>
                     </div>
                 </div>
@@ -926,6 +927,20 @@
                 <div class="section-label">Контакты</div>
                 <h2 class="section-title">Как нас найти</h2>
                 <p class="section-desc">Приезжайте в наш цех и офис — покажем производство, познакомим с командой, обсудим ваш проект за вкусным и ароматным кофе</p>
+                <div class="coords-block">
+                    <span class="coords-label">Наши координаты</span>
+                    <div class="coords-row">
+                        <span class="section-coords" id="coordsText">55.615756, 37.794873</span>
+                        <button class="btn btn-copy-coords" id="copyCoordsBtn" aria-label="Копировать координаты">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            <span class="btn-copy-text">Копировать</span>
+                        </button>
+                        <span class="coords-copied" id="coordsCopied">Координаты скопированы</span>
+                    </div>
+                </div>
             </div>
             <div class="contacts-grid">
                 <div class="contacts-info animate-on-scroll" data-delay="1">
@@ -1581,23 +1596,63 @@
         }
     </script>
 
+    <!-- Copy Coordinates -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const copyBtn = document.getElementById('copyCoordsBtn');
+            const coordsText = document.getElementById('coordsText');
+            const copiedMsg = document.getElementById('coordsCopied');
+
+            if (copyBtn && coordsText) {
+                copyBtn.addEventListener('click', () => {
+                    const coords = coordsText.textContent.trim();
+
+                    navigator.clipboard.writeText(coords).then(() => {
+                        copiedMsg.classList.add('visible');
+                        copyBtn.querySelector('.btn-copy-text').textContent = 'Скопировано!';
+
+                        setTimeout(() => {
+                            copiedMsg.classList.remove('visible');
+                            copyBtn.querySelector('.btn-copy-text').textContent = 'Копировать';
+                        }, 2500);
+                    }).catch(() => {
+                        // Fallback for older browsers
+                        const textarea = document.createElement('textarea');
+                        textarea.value = coords;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+
+                        copiedMsg.classList.add('visible');
+                        copyBtn.querySelector('.btn-copy-text').textContent = 'Скопировано!';
+
+                        setTimeout(() => {
+                            copiedMsg.classList.remove('visible');
+                            copyBtn.querySelector('.btn-copy-text').textContent = 'Копировать';
+                        }, 2500);
+                    });
+                });
+            }
+        });
+    </script>
+
     <!-- Typing Animation -->
     <script src="typing-animation.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const heroTyping = new TypingAnimation({
                 element: document.getElementById('hero-typing-text'),
-                phrases: [
-                    'Мы там, где ваше мероприятие!' 
-                ],
+                phrase: 'где ваше мероприятие!',
                 errorChance: 0.06,
-                baseSpeed: 75,
-                pauseAfterPhrase: 3000,
-                pauseBeforeDelete: 500,
-                deleteSpeed: 50,
-                maxConsecutiveErrors: 1
+                baseSpeed: 75
             });
-            heroTyping.start();
+            // Начинаем печать второй строки после появления первой
+            setTimeout(() => {
+                heroTyping.start();
+            }, 1200);
         });
     </script>
 </body>

@@ -1,16 +1,12 @@
 /**
- * Typing Animation — реалистичный набор текста с ошибками и исправлениями
+ * Typing Animation — реалистичный набор текста с одной ошибкой и исправлением
  * 
  * Использование:
  *   const typer = new TypingAnimation({
  *     element: document.getElementById('typing-text'),
- *     phrases: ['Первая фраза', 'Вторая фраза'],
+ *     phrase: 'Фраза для набора',
  *     errorChance: 0.08,        // вероятность ошибки (0–1)
  *     baseSpeed: 65,            // базовая скорость набора (мс на символ)
- *     pauseAfterPhrase: 2500,   // пауза после фразы (мс)
- *     pauseBeforeDelete: 400,   // пауза перед стиранием (мс)
- *     deleteSpeed: 40,          // скорость стирания (мс на символ)
- *     maxConsecutiveErrors: 2,  // макс. ошибки подряд
  *   });
  *   typer.start();
  */
@@ -18,22 +14,15 @@
 class TypingAnimation {
     constructor(options = {}) {
         this.element = options.element;
-        this.phrases = options.phrases || [];
+        this.phrase = options.phrase || '';
         this.errorChance = options.errorChance || 0.08;
         this.baseSpeed = options.baseSpeed || 65;
-        this.pauseAfterPhrase = options.pauseAfterPhrase || 2500;
-        this.pauseBeforeDelete = options.pauseBeforeDelete || 400;
-        this.deleteSpeed = options.deleteSpeed || 40;
-        this.maxConsecutiveErrors = options.maxConsecutiveErrors || 2;
         this.typing = false;
-        this.currentPhraseIndex = 0;
-        this.consecutiveErrors = 0;
         this.abortController = null;
         
         // Создаём курсор
         this.cursor = document.createElement('span');
         this.cursor.className = 'typing-cursor';
-        this.element.appendChild(this.cursor);
     }
 
     /** Получить скорость набора с вариативностью (как человек) */
@@ -42,56 +31,65 @@ class TypingAnimation {
         return this.baseSpeed + (Math.random() * variance * 2 - variance);
     }
 
-    /** Получить случайный "соседний" символ для ошибки */
-    getWrongChar(char, allChars) {
-        const isSpace = char === ' ';
+    /** Получить соседний символ на клавиатуре (реалистичная ошибка) */
+    getNeighborChar(char) {
         const isUpper = char === char.toUpperCase() && char !== ' ';
-        const isLetter = /[a-zA-Zа-яА-ЯёЁ]/.test(char);
-        
-        if (isSpace) {
-            // Иногда вместо пробела — повтор предыдущего или табуляция
-            const r = Math.random();
-            if (r < 0.5) return char; // промах мимо пробела
-            if (r < 0.8) return '\t';
-            return allChars[Math.floor(Math.random() * allChars.length)];
-        }
-        
-        if (isLetter) {
-            const lower = char.toLowerCase();
-            const pos = 'abcdefghijklmnopqrstuvwxyzаоиеёэыуклмнпргшщзхъфывджчцбю'.indexOf(lower);
-            if (pos === -1) return allChars[Math.floor(Math.random() * allChars.length)];
-            
-            // Соседняя клавиша на раскладке
-            const rows = [
-                'abcdefghijklmnopqrstuvwxyz',
-                'фыволгждпршщзхъ',
-                'ячсмицьб'
-            ];
-            
-            let found = false;
-            for (const row of rows) {
-                const idx = row.indexOf(lower);
-                if (idx !== -1) {
-                    const offset = Math.random() < 0.5 ? -1 : 1;
-                    const neighbor = row[idx + offset];
-                    if (neighbor) {
-                        return isUpper ? neighbor.toUpperCase() : neighbor;
-                    }
-                    found = true;
-                    break;
+        const lower = char.toLowerCase();
+
+        // Раскладки клавиатуры (QWERTY + ЙЦУКЕН)
+        const rows = [
+            'abcdefghijklmnopqrstuvwxyz',   // QWERTY
+            'фыволгждпршщзхъ',             // ЙЦУКЕН основная
+            'ячсмицьб'                      // ЙЦУКЕН нижняя
+        ];
+
+        // Ищем символ в раскладке
+        for (const row of rows) {
+            const idx = row.indexOf(lower);
+            if (idx !== -1) {
+                // Случайно выбираем левого или правого соседа
+                const offset = Math.random() < 0.5 ? -1 : 1;
+                const neighbor = row[idx + offset];
+                if (neighbor) {
+                    return isUpper ? neighbor.toUpperCase() : neighbor;
+                }
+                // Если соседа нет с одной стороны, пробуем с другой
+                const otherOffset = offset === -1 ? 1 : -1;
+                const otherNeighbor = row[idx + otherOffset];
+                if (otherNeighbor) {
+                    return isUpper ? otherNeighbor.toUpperCase() : otherNeighbor;
                 }
             }
-            
-            if (!found) return allChars[Math.floor(Math.random() * allChars.length)];
         }
-        
-        // Для специальных символов — случайный символ
-        return allChars[Math.floor(Math.random() * allChars.length)];
-    }
 
-    /** Получить все допустимые символы для ошибок */
-    getAllChars() {
-        return 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZаоиеёэыуклмнпргшщзхъфывджчцбюАОИЕЁЭЫУКЛМНПРГШЩЗХЪФЫВДЖЧЦБЮ1234567890!@#$%^&*()_+-=[]{}|;:,.<>?/ ';
+        // Для пробела — случайный символ из строки цифр или буква
+        if (char === ' ') {
+            // Человек может пропустить пробел или нажать соседнюю букву
+            const r = Math.random();
+            if (r < 0.4) {
+                // Пропуск — не набираем ничего (возвращаем пустую строку)
+                return '';
+            } else {
+                // Случайная буква из середины раскладки (типичная ошибка "размазывание")
+                const randomLetters = 'аеиоуыклтснрп';
+                return randomLetters[Math.floor(Math.random() * randomLetters.length)];
+            }
+        }
+
+        // Для цифр и спецсимволов — соседняя клавиша
+        if (/[\d]/.test(char)) {
+            const numPos = '1234567890'.indexOf(char);
+            if (numPos !== -1) {
+                const neighbors = [];
+                if (numPos > 0) neighbors.push('1234567890'[numPos - 1]);
+                if (numPos < 9) neighbors.push('1234567890'[numPos + 1]);
+                return neighbors[Math.floor(Math.random() * neighbors.length)];
+            }
+        }
+
+        // Фоллбэк — случайная буква (крайний случай)
+        const fallback = 'аоиеёэыуклмнпргшщзхъфывджчцбю';
+        return fallback[Math.floor(Math.random() * fallback.length)];
     }
 
     /** Задержка */
@@ -107,49 +105,10 @@ class TypingAnimation {
         });
     }
 
-    /** Набрать одну фразу */
-    async typePhrase(phrase) {
-        const allChars = this.getAllChars();
-        let currentText = '';
-        let consecutiveErrors = 0;
-
-        for (let i = 0; i < phrase.length; i++) {
-            const targetChar = phrase[i];
-            
-            // Решаем, будет ли ошибка
-            const willError = Math.random() < this.errorChance && consecutiveErrors < this.maxConsecutiveErrors;
-            
-            if (willError) {
-                const wrongChar = this.getWrongChar(targetChar, allChars);
-                currentText += wrongChar;
-                this.consecutiveErrors++;
-                
-                // Показываем текст с ошибкой (красный)
-                this.element.innerHTML = this.escapeHtml(currentText) + 
-                    (this.cursor.outerHTML);
-                
-                // Пауза — "человек заметил ошибку"
-                await this.delay(this.getTypingSpeed() * 4);
-                
-                // Стираем ТОЛЬКО ошибочный символ
-                await this.deleteLastChar();
-                currentText = currentText.slice(0, -1);
-                consecutiveErrors = 0;
-                
-                // Пауза перед правильным набором
-                await this.delay(this.baseSpeed * 2);
-            }
-            
-            // Печатаем правильный символ
-            this.consecutiveErrors = 0;
-            currentText += targetChar;
-            
-            // Показываем набранный текст
-            this.element.innerHTML = this.escapeHtml(currentText) + 
-                (this.cursor.outerHTML);
-            
-            await this.delay(this.getTypingSpeed());
-        }
+    /** Показать текст с курсором */
+    showText(text) {
+        this.element.textContent = text;
+        this.element.appendChild(this.cursor);
     }
 
     /** Стереть последний символ */
@@ -159,64 +118,71 @@ class TypingAnimation {
         
         this.element.textContent = text.slice(0, -1);
         this.element.appendChild(this.cursor);
-        await this.delay(this.deleteSpeed);
+        await this.delay(this.deleteSpeed || 40);
     }
 
-    /** Стереть весь текст */
-    async deleteToEnd() {
-        const text = this.element.textContent.replace(/\s+$/, '');
-        let currentLength = text.length;
+    /** Набрать фразу с одной ошибкой и исправлением */
+    async typePhrase() {
+        let currentText = '';
+        let errorOccurred = false;
 
-        while (currentLength > 0) {
-            currentLength--;
-            this.element.textContent = text.substring(0, currentLength);
-            this.element.appendChild(this.cursor);
-            await this.delay(this.deleteSpeed);
+        for (let i = 0; i < this.phrase.length; i++) {
+            const targetChar = this.phrase[i];
+            
+            // Решаем, будет ли ошибка (только одна за весь цикл, не на пробеле)
+            const willError = !errorOccurred && Math.random() < this.errorChance && targetChar !== ' ';
+            
+            if (willError) {
+                const wrongChar = this.getNeighborChar(targetChar);
+                
+                // Показываем текст с ошибкой
+                this.showText(currentText + wrongChar);
+                
+                // Пауза — "человек заметил ошибку"
+                await this.delay(this.getTypingSpeed() * 4);
+                
+                // Стираем ТОЛЬКО ошибочный символ
+                await this.deleteLastChar();
+                
+                // Пауза перед правильным набором
+                await this.delay(this.baseSpeed * 2);
+                
+                errorOccurred = true;
+            }
+            
+            // Печатаем правильный символ
+            currentText += targetChar;
+            
+            // Показываем набранный текст
+            this.showText(currentText);
+            
+            await this.delay(this.getTypingSpeed());
         }
     }
 
-    /** Пауза между фразами */
-    async pauseBetweenPhrases() {
-        // Меняем курсор на "думающий"
-        this.cursor.classList.add('typing-cursor--pausing');
-        await this.delay(this.pauseBeforeDelete);
-        await this.deleteToEnd();
-        await this.delay(this.pauseAfterPhrase);
-        this.cursor.classList.remove('typing-cursor--pausing');
-    }
-
-    /** HTML-экранирование */
-    escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
-    /** Начать анимацию */
+    /** Начать анимацию (один раз, без повторений) */
     async start() {
         if (this.typing) return;
         this.typing = true;
         this.abortController = new AbortController();
 
-        while (this.typing && !this.abortController.signal.aborted) {
-            const phrase = this.phrases[this.currentPhraseIndex % this.phrases.length];
+        try {
+            // Очищаем перед началом
+            this.element.textContent = '';
+            this.element.appendChild(this.cursor);
             
-            try {
-                // Очищаем перед началом
-                this.element.textContent = '';
-                
-                // Набираем фразу
-                await this.typePhrase(phrase);
-                
-                // Пауза — читаем
-                await this.pauseBetweenPhrases();
-                
-                // Переходим к следующей фразе
-                this.currentPhraseIndex++;
-            } catch (err) {
-                if (err.name === 'AbortError') break;
-                console.error('TypingAnimation error:', err);
+            // Набираем фразу
+            await this.typePhrase();
+            
+            // Убираем курсор после завершения набора
+            if (this.cursor.parentNode) {
+                this.cursor.parentNode.removeChild(this.cursor);
             }
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+            console.error('TypingAnimation error:', err);
+        } finally {
+            this.typing = false;
         }
     }
 
@@ -226,14 +192,6 @@ class TypingAnimation {
         if (this.abortController) {
             this.abortController.abort();
         }
-    }
-
-    /** Перезапустить */
-    restart() {
-        this.stop();
-        this.currentPhraseIndex = 0;
-        this.consecutiveErrors = 0;
-        this.start();
     }
 }
 
