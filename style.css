@@ -343,7 +343,20 @@ img {
 .hero-slide-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(10, 10, 15, 0.85) 0%, rgba(10, 10, 15, 0.6) 50%, rgba(10, 10, 15, 0.75) 100%);
+    background: transparent;
+}
+
+/* Градиентное затемнение только под текстом */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 65%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(10, 10, 15, 0.85) 0%, rgba(10, 10, 15, 0.6) 60%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
 }
 
 .hero::before {
@@ -840,6 +853,50 @@ img {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 2px;
+}
+
+/* ===== PARTNERS SECTION ===== */
+.partners {
+    padding: var(--section-gap) 0;
+    background: var(--bg-secondary);
+}
+
+.partners-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.partner-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+    min-height: 120px;
+}
+
+.partner-item:hover {
+    border-color: rgba(255, 107, 53, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.partner-logo {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.partner-logo svg {
+    width: 100%;
+    height: 100%;
+    max-height: 60px;
 }
 
 /* ===== ADVANTAGES SECTION ===== */
@@ -1592,6 +1649,7 @@ img {
     .portfolio-grid,
     .reviews-grid { grid-template-columns: 1fr; }
     .advantages-grid { grid-template-columns: repeat(2, 1fr); }
+    .partners-grid { grid-template-columns: repeat(3, 1fr); }
     .calc-inner { grid-template-columns: 1fr; gap: 40px; }
     .process-timeline {
         grid-template-columns: repeat(3, 1fr);
@@ -1621,7 +1679,10 @@ img {
     .services-grid,
     .portfolio-grid,
     .reviews-grid,
-    .advantages-grid { grid-template-columns: 1fr; }
+    .advantages-grid,
+    .partners-grid { grid-template-columns: repeat(2, 1fr); }
+    .partner-item { min-height: 100px; padding: 20px 16px; }
+    .partner-logo { height: 45px; }
     .calc-inner { grid-template-columns: 1fr; }
     .calc-form { padding: 24px; }
     .form-row { grid-template-columns: 1fr; }
